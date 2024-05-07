@@ -1,54 +1,61 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			message: null
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 
-			getMessage: async () => {
+			signup: async (formData)=>{
+				console.log("signin", formData)
 				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
+					const res = await fetch(process.env.BACKEND_URL + "/signup", {
+						method: 'POST',
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							"username": formData.username,
+							"displayname": formData.displayname,
+							"email": formData.email,
+							"password": formData.password
+						})
+					})
+					console.log("status", res.status)
+					const data = await res.json()
+					setStore({ message: data.msg })
+					console.log("response", data)
 					return data;
 				}catch(error){
-					console.log("Error loading message from backend", error)
+					let msg= "Error loading message from backend"
+					console.log(msg, error)
+					setStore({ message: msg })
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+			login: async (formData)=>{
+				console.log("login", formData)
+				try{
+					const res = await fetch(process.env.BACKEND_URL + "/login", {
+						method: 'POST',
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							"account": formData.email,
+							"password": formData.password
+						})
+					})
+					const data = await res.json()
+					setStore({ message: data.msg })
+					console.log("response", data)
+					return data;
+				}catch(error){
+					console.log("ERROR", error)
+					setStore({ message: msg })
+				}
 			}
 		}
-	};
-};
+	}
+}
 
-export default getState;
+export default getState

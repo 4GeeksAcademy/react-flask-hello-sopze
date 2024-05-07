@@ -1,3 +1,16 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+.pw-btn{
+    width: 32px;
+    aspect-ratio: 1;
+    transform-origin: center;
+    transform: translate(0,-14%);
+    right: -48px;
+    & .pw-icon { 
+        position: absolute; 
+        inset: 0px;
+        top: 5px;
+    }
+
+    &.pw-sign {
+        transform: translate(0,50%);
+    }
+}

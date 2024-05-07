@@ -5,16 +5,14 @@ import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
-import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
+
+import Signin, { SIGN_MODE } from "./pages/signin";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
-//create your first component
 const Layout = () => {
-    //the basename is used when your project is published in a subdirectory and not in the root of the domain
-    // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
@@ -23,14 +21,15 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
                     <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
+                        <Route path="/"  element={<Home />}/>
+                        <Route path="/signup" element={<Signin signmode={SIGN_MODE.signup} />}  />
+                        <Route path="/login" element={<Signin signmode={SIGN_MODE.login} />}  />
+                        <Route path="/logout" element={<Signin signmode={SIGN_MODE.logout} />}  />
+                        <Route path="/unsign" element={<Signin signmode={SIGN_MODE.unsign} />}  />
+                        <Route path="/private" element={<Demo />}  />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
                 </ScrollToTop>
             </BrowserRouter>
         </div>
