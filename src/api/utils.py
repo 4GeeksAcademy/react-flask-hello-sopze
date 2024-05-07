@@ -1,3 +1,4 @@
+import time
 from flask import jsonify, url_for
 
 class APIException(Exception):
@@ -31,11 +32,19 @@ def generate_sitemap(app):
                 links.append(url)
 
     links_html = "".join(["<li><a href='" + y + "'>" + y + "</a></li>" for y in links])
-    return """
-        <div style="text-align: center;">
-        <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
-        <h1>Rigo welcomes you to your API!!</h1>
-        <p>API HOST: <script>document.write('<input style="padding: 5px; width: 300px" type="text" value="'+window.location.href+'" />');</script></p>
-        <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
-        <p>Remember to specify a real endpoint path like: </p>
-        <ul style="text-align: left;">"""+links_html+"</ul></div>"
+    swatch= app.config['FLASK_ADMIN_SWATCH']
+    return f"""
+        <head>
+            <title>-- BACKEND --</title>
+            <link href="/admin/static/bootstrap/bootstrap3/swatch/{swatch}/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+        </head>
+        <body>
+            <div style="text-align: center;">
+            <img style="max-height: 128px" src='/rigo-no-baby.png' />
+            <h1>Rigo... RIGO?? where's Rigo!!!????</h1>
+            <p><script>document.write('<input style="background: #000; color:#fff; text-align: center; padding: 5px; min-width: 640px" type="text" value="'+window.location.href+'" />');</script></p>
+            <ul style="text-align: left;">{links_html}</ul></div>
+        </body>"""
+
+def current_millis_time():
+    return int(time.time() * 1000)
