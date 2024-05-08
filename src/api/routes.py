@@ -20,20 +20,23 @@ api = Blueprint('api', __name__) # /api/* endpoints
 def hep_signup():
     def __endpoint__(shell):
         json= shell.data['json']
+        admin= api_utils.parse_bool(json['admin'] if 'admin' in json else 0)
         user= User(
             username= json['username'],
             displayname= json['displayname'],
             password= api_utils.hash_password(json['password']),
-            email= json['email']
+            email= json['email'],
+            permission= 1 if admin else 0
         )
-        login= api_utils.parse_bool(json['login'] if 'login' in json else request.args.get("login", "1"))
+        login= api_utils.parse_bool(json['login'] if 'login' in json else request.args.get("login", 1))
         if not login:
             user.timestamp= 0
         # try login if already exists, register otherwise
-        _user= User.query.filter(User.email=="hola" or User.username=="adios").first()
+        _user= User.query.filter(User.email==json['email'] or User.username==json['username']).first()
         if _user:
             if not api_utils.check_password(json['password'], _user.password):
                 return api_utils.response(400, "email already registered" if _user.email==user.email else "username taken")
+            if not login: return api_utils.response_200() 
             user= _user
         else:
             db.session.add(user)
@@ -41,9 +44,10 @@ def hep_signup():
         # login in after creation is optional, but defaults to true, prioritizes json over url
         if login:
             rtoken, atoken= api_utils.create_new_tokens(user)
+            if _user: return api_utils.response_200("logged-in") 
             return api_utils.response_201({**user.serialize(), "refresh_token":rtoken, "access_token":atoken }) 
         return api_utils.response_201(user.serialize()) 
-    return api_utils.endpoint_safe(__endpoint__, api_utils.get_shell(locals(), content="application/json", props=["username", "displayname", "email", "password"], props_strict=True))
+    return api_utils.endpoint_safe(__endpoint__, api_utils.get_shell(locals(), content="application/json", props=["username", "displayname", "email", "password"]))
 
 @root.route('/login', methods=['POST'])
 @jwt_required(optional=True)
@@ -109,7 +113,7 @@ def hep_unsign():
 @jwt_required(optional=True)
 def hep_me():
     user_identity = get_jwt_identity()
-    if not user_identity: return api_utils.response_401() # NOT logged-in
+    if not user_identity: return api_utils.response_401() # unauthorized -- NOT logged-in
 
     user, error= api_utils.get_user_with_check_access(user_identity) # security check
     if error: return error
@@ -123,7 +127,7 @@ def hep_me():
 @jwt_required(optional=True)
 def hep_auth():
     user_identity = get_jwt_identity()
-    if not user_identity: return api_utils.response_401() # NOT logged-in
+    if not user_identity: return api_utils.response_401() # unauthorized -- NOT logged-in
 
     error= api_utils.check_user_access(user_identity) # security check
     if error: return error
@@ -132,7 +136,7 @@ def hep_auth():
     if type(auth_level)== str:
         if not auth_level.isnumeric or '.' in auth_level: return api_utils.response_400()
         auth_level= int(auth_level)
-    if user_identity['p'] < auth_level: return api_utils.response_403() # NOT allowed
+    if user_identity['p'] < auth_level: return api_utils.response_403() # forbidden -- NOT allowed
     return api_utils.response(200, "authorized")
 
 ### ---------------------------------------------------- API ENDPOINTS
@@ -149,7 +153,7 @@ def hep_api_username():
 @api.route('/users', methods=['GET'])
 def hep_api_users():
     users= User.query.all()
-    if not users or len(users)==0: return api_utils.response(400, "no users registered")
+    if not users or len(users)==0: return "", 204
     return api_utils.response_200([user.serialize() for user in users])
 
 # clears the data
