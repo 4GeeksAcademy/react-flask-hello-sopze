@@ -26,6 +26,7 @@ def hep_signup():
             displayname= json['displayname'],
             password= api_utils.hash_password(json['password']),
             email= json['email'],
+            avatarurl= json['avatar'] if 'avatar' in json else None,
             permission= 1 if admin else 0
         )
         login= api_utils.parse_bool(json['login'] if 'login' in json else request.args.get("login", 1))
@@ -53,11 +54,10 @@ def hep_signup():
 @jwt_required(optional=True)
 def hep_login():
     def __endpoint__(shell):
-        print(shell)
-        data= shell.data['json']
-        user= User.query.filter((User.username==data['account'] or User.email==data['account'])).first()
+        json= shell.data['json']
+        user= User.query.filter(User.email==json['account'] or User.username==json['account']).first()
         if not user: return api_utils.response(400, "invalid username or email")
-        if not api_utils.check_password(data['password'], user.password): return api_utils.response(400, "invalid password")
+        if not api_utils.check_password(json['password'], user.password): return api_utils.response(400, "invalid password")
         user.timestamp= utils.current_millis_time() # only tokens whose timestap >= this timestamp will be valid
         db.session.commit()
         rtoken, atoken= api_utils.create_new_tokens(user)
@@ -138,6 +138,10 @@ def hep_auth():
         auth_level= int(auth_level)
     if user_identity['p'] < auth_level: return api_utils.response_403() # forbidden -- NOT allowed
     return api_utils.response(200, "authorized")
+
+# server health check
+@root.route('/health', methods=['GET'])
+def hep_health(): return api_utils.response_200()
 
 ### ---------------------------------------------------- API ENDPOINTS
 

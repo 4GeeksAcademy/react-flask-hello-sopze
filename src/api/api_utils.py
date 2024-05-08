@@ -47,9 +47,9 @@ def endpoint_safe(f, shell):
 def hash_password(password):
     return hashpw(bytes(password, 'UTF-8'), gensalt())
 
+# second check is for us to be able to pass the hashed password as a b'*****' string, to automate some tests in frontend basically
 def check_password(input, password):
-    print(input, password)
-    return checkpw(bytes(input, 'UTF-8'), password)
+    return checkpw(bytes(input, 'UTF-8'), password) or input == str(password)
 
 # check a list of properties against data
 def check_missing_properties_manual(data, props):
