@@ -1,3 +1,7 @@
+:root{
+    --cv-form-height: 128px;
+}
+
 .pw-btn{
     width: 32px;
     aspect-ratio: 1;
@@ -37,4 +41,25 @@
     --bs-btn-active-border-color: #4328a5;
     --bs-btn-disabled-bg: #6f35dc;
     --bs-btn-disabled-border-color: #6f35dc;
+}
+
+.userlist-container {
+    height: calc(100vh - 48px);
+    top: 24px;
+    right: 24px;
+}
+
+.userlist-element {
+    
+    background: var(--bs-list-group-bg);
+    
+    &:hover{
+        background: var(--bs-list-group-action-hover-bg)
+    }
+}
+
+.userlist-avatar {
+    width: 48px;
+    border-radius: 100%;
+    aspect-ratio: 1;
 }

@@ -3,14 +3,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
-import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
 import injectContext from "./store/appContext";
 
-import Session from "./pages/Session.js";
+import Navbar from "./component/navbar.js";
+import Listener from "./component/listener.js";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
+import Home from "./pages/home.js";
+import Session from "./pages/session.js";
+import Private from "./pages/private.js";
+import Admin from "./pages/admin.js";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -19,19 +20,22 @@ const Layout = () => {
 
     return (
         <BrowserRouter basename={basename}>
-            <ScrollToTop>
-                <Routes>
-                    <Route path="/"  element={<Home />}/>
-                    {
-                        ["signup", "login", "logout", "unsign"].map(e=>
-                            <Route key={`route-${e}`} path={`/${e}`} element={<Session mode={e} />} />
-                        )
-                    }
-                    <Route path="/private" element={<Demo />} />
-                    <Route path="/admin" element={<Demo />} />
-                    <Route element={<h1>Not found!</h1>} />
-                </Routes>
-            </ScrollToTop>
+            <Navbar />
+                <ScrollToTop>
+                    <Routes>
+                        <Route path="/"  element={<Home />}/>
+                        <Route path="/home"  element={<Home />}/>
+                        {
+                            ["signup", "login", "logout", "unsign"].map(e=>
+                                <Route key={`route-${e}`} path={`/${e}`} element={<Session mode={e} />} />
+                            )
+                        }
+                        <Route path="/private" element={<Private />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route element={<h1>Not found!</h1>} />
+                    </Routes>
+                </ScrollToTop>
+            <Listener />
         </BrowserRouter>
     );
 };
