@@ -7,7 +7,7 @@ import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import injectContext from "./store/appContext";
 
-import Signin, { SIGN_MODE } from "./pages/signin";
+import Session from "./pages/Session.js";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -18,21 +18,21 @@ const Layout = () => {
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
 
     return (
-        <div>
-            <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Routes>
-                        <Route path="/"  element={<Home />}/>
-                        <Route path="/signup" element={<Signin signmode={SIGN_MODE.signup} />}  />
-                        <Route path="/login" element={<Signin signmode={SIGN_MODE.login} />}  />
-                        <Route path="/logout" element={<Signin signmode={SIGN_MODE.logout} />}  />
-                        <Route path="/unsign" element={<Signin signmode={SIGN_MODE.unsign} />}  />
-                        <Route path="/private" element={<Demo />}  />
-                        <Route element={<h1>Not found!</h1>} />
-                    </Routes>
-                </ScrollToTop>
-            </BrowserRouter>
-        </div>
+        <BrowserRouter basename={basename}>
+            <ScrollToTop>
+                <Routes>
+                    <Route path="/"  element={<Home />}/>
+                    {
+                        ["signup", "login", "logout", "unsign"].map(e=>
+                            <Route key={`route-${e}`} path={`/${e}`} element={<Session mode={e} />} />
+                        )
+                    }
+                    <Route path="/private" element={<Demo />} />
+                    <Route path="/admin" element={<Demo />} />
+                    <Route element={<h1>Not found!</h1>} />
+                </Routes>
+            </ScrollToTop>
+        </BrowserRouter>
     );
 };
 

@@ -8,7 +8,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			signup: async (formData)=>{
 				console.log("signin", formData)
 				try{
-					const res = await fetch(process.env.BACKEND_URL + "/signup", {
+					route= formData.login ? `/signup?login=${formData.login}` : "/signup"
+					const res = await fetch(process.env.BACKEND_URL + route, {
 						method: 'POST',
 						headers: {
 							"Content-Type": "application/json"
@@ -46,7 +47,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					})
 					const data = await res.json()
-					setStore({ message: data.msg })
+					if(data.msg == "ok"){
+						setStore({
+							refresh_token: data.res.refresh_token,
+							access_token: data.res.access_token 
+						})
+					}
 					console.log("response", data)
 					return data;
 				}catch(error){

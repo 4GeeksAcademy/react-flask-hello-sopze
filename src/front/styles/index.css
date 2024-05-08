@@ -14,3 +14,27 @@
         transform: translate(0,50%);
     }
 }
+
+.cbtn-pink{
+    --bs-btn-bg: #c446bd;
+    --bs-btn-border-color: #c446bd;
+    --bs-btn-hover-bg: #bb2dbb;
+    --bs-btn-hover-border-color: #9e32a1;
+    --bs-btn-focus-shadow-rgb: 206, 100, 206;
+    --bs-btn-active-bg: #9e32a1;
+    --bs-btn-active-border-color: #9b28a5;
+    --bs-btn-disabled-bg: #c446bd;
+    --bs-btn-disabled-border-color: #c446bd;
+}
+
+.cbtn-purple{
+    --bs-btn-bg: #6f35dc;
+    --bs-btn-border-color: #6f35dc;
+    --bs-btn-hover-bg: #472dbb;
+    --bs-btn-hover-border-color: #522ab0;
+    --bs-btn-focus-shadow-rgb: 92, 83, 225;
+    --bs-btn-active-bg: #522ab0;
+    --bs-btn-active-border-color: #4328a5;
+    --bs-btn-disabled-bg: #6f35dc;
+    --bs-btn-disabled-border-color: #6f35dc;
+}
